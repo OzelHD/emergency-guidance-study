@@ -5,7 +5,7 @@ Checked 09.11.2026 on Windows with Node.js 22.17.0.
 ## Automated
 
 - `npm run build`: passed strict TypeScript compilation and Vite production build. Approximately 77 kB gzipped application JavaScript and 3.4 kB gzipped CSS. No runtime dependencies besides React and React DOM.
-- `npm test`: all **6 tests passed**. Four rendered-component tests cover the entire landslide/flood flow in DE and EN, setup navigation, theme persistence, dynamic progress, completion, final-step review, reset defaults and study information. Every active step is checked for exactly one button and the absence of the header, footer, information dialog and extra notices. Two tests cover bilingual content invariants and invalid navigation transitions.
+- `npm test`: all **7 tests passed**. Four rendered-component tests cover the entire landslide/flood flow in DE and EN, setup navigation, theme persistence, dynamic progress, completion, final-step review, reset defaults and study information. Every active step is checked for exactly one button and the absence of the header, footer, information dialog and extra notices. Two tests cover bilingual content invariants and invalid navigation transitions. One regression test exercises offline installation, activation, old-cache cleanup and offline responses across a release update.
 - The test renderer emits its upstream deprecation notice; tests pass. These component tests do not replace browser, assistive-technology or participant evaluation.
 
 ## Browser checks
@@ -27,6 +27,8 @@ All 7 steps in both languages were checked at 320 × 568, 390 × 844 and 568 × 
 The initial cache served the HTML shell but missed module assets when a host varied responses by `Origin`. The production service worker now matches exact app asset URLs with `ignoreVary: true` within its own revisioned cache. There is no personalized content in that cache. A fresh production origin reloaded the complete application successfully after the server was stopped; flood navigation and completion then worked without that server. Both language dictionaries are in the cached JavaScript bundle.
 
 The final production rebuild also includes a revision derived from JS/CSS filenames, the HTML source and the favicon. App updates do not force a reload during an existing participant session.
+
+A later hosted update revealed that a browser could cache stale HTML while installing the new release's assets, then remove the old assets and show an empty page. The worker is now written after the complete build and embeds that build's compiled HTML directly. Its assets are fetched with `cache: 'reload'`. This keeps the cached document and hashed assets in the same release even when HTTP-cached HTML is stale. A regression test verifies the transition with an old cache present and the network unavailable after activation.
 
 ## Deployment status
 
