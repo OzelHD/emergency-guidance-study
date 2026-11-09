@@ -24,12 +24,30 @@ export function App({ offlineStatus = 'loading' }: { offlineStatus?: 'loading' |
     document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#142721' : '#f6f7f3');
   }, [lang, dark, t.brand]);
   useEffect(() => {
+    document.documentElement.dataset.flow = flow.screen;
     if (firstRender.current) { firstRender.current = false; return; }
     mainRef.current?.focus();
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, [flow]);
   useEffect(() => { if (infoOpen) dialogRef.current?.showModal(); else dialogRef.current?.close(); }, [infoOpen]);
   function restart() { setLang('de'); setDark(false); dispatch({ type: 'reset' }); }
+
+  if (flow.screen === 'steps' && scenario) {
+    const step = scenario.steps[flow.index];
+    const progress = `${t.step} ${flow.index + 1} ${t.of} ${scenario.steps.length}`;
+    return <div className="app-shell focused-shell">
+      <main id="main" ref={mainRef} tabIndex={-1} className="main focused-main">
+        <div className="focused-progress" role="progressbar" aria-label={progress} aria-valuemin={0} aria-valuemax={scenario.steps.length} aria-valuenow={flow.index + 1}><strong>{progress}</strong></div>
+        <article className="guidance-card focused-card">
+          <div className="focused-visual"><Illustration name={step.illustration}/></div>
+          <div className="focused-copy"><h1>{step.title[lang]}</h1><p>{step.explanation[lang]}</p></div>
+        </article>
+        <nav className="focused-navigation" aria-label={t.navigation}>
+          <button className="button primary" onClick={() => dispatch({ type: 'next', count: scenario.steps.length })}>{t.next}<Icon name="arrow"/></button>
+        </nav>
+      </main>
+    </div>;
+  }
 
   return <div className="app-shell">
     <a className="skip-link" href="#main">{t.skip}</a>
@@ -53,15 +71,11 @@ export function App({ offlineStatus = 'loading' }: { offlineStatus?: 'loading' |
         </section>
         <aside className="study-note"><Icon name="shield" size={24}/><div><p>{t.studyNote}</p><p className="secondary-text">{t.privacy}</p></div></aside>
       </> : scenario && <>
-        <div className="guidance-topline"><span className="scenario-tag">{scenario.name[lang]}</span><span>{flow.screen === 'warning' ? t.situation : flow.screen === 'complete' ? t.finishedEyebrow : t.pace}</span></div>
+        <div className="guidance-topline"><span className="scenario-tag">{scenario.name[lang]}</span><span>{flow.screen === 'warning' ? t.situation : t.finishedEyebrow}</span></div>
         {flow.screen === 'warning' && <article className="guidance-card warning-card"><div className="warning-label"><Icon name="warning" size={19}/>{t.warning}</div><div className="warning-visual"><Illustration name={scenario.illustration}/></div><h1>{scenario.warning[lang]}</h1><p className="warning-description">{scenario.situation[lang]}</p><div className="setup-note"><strong>{t.before}</strong><p>{scenario.setup[lang]}</p></div><p className="simulation-explanation">{t.studyContext}</p></article>}
-        {flow.screen === 'steps' && <>
-          <div className="progress-section"><div className="progress-text"><strong>{t.step} {flow.index + 1} {t.of} {scenario.steps.length}</strong><span>{scenario.name[lang]}</span></div><div className="progress-track" role="progressbar" aria-label={`${t.step} ${flow.index + 1} ${t.of} ${scenario.steps.length}`} aria-valuemin={0} aria-valuemax={scenario.steps.length} aria-valuenow={flow.index + 1}>{scenario.steps.map((s, i) => <span key={s.id} className={i <= flow.index ? 'filled' : ''}/>)}</div></div>
-          <article className="guidance-card step-card"><div className="step-visual"><span className="step-number">{String(flow.index + 1).padStart(2, '0')}</span><Illustration name={scenario.steps[flow.index].illustration}/></div><div className="step-copy"><p className="eyebrow">{t.step.toUpperCase()} {String(flow.index + 1).padStart(2, '0')}</p><h1>{scenario.steps[flow.index].title[lang]}</h1><p>{scenario.steps[flow.index].explanation[lang]}</p></div></article>
-        </>}
         {flow.screen === 'complete' && <article className="guidance-card complete-card"><Illustration name="complete"/><p className="eyebrow">{t.finishedEyebrow}</p><h1>{t.finished}</h1><p>{t.finishedText}</p><p className="completion-note"><Icon name="info" size={18}/>{t.notAllClear}</p></article>}
         <nav className="flow-navigation" aria-label={t.navigation}>
-          {flow.screen === 'complete' ? <><button className="button secondary" onClick={() => dispatch({ type: 'review', count: scenario.steps.length })}><Icon name="back"/>{t.review}</button><button className="button primary" onClick={restart}>{t.restart}<Icon name="restart"/></button></> : <><button className="button secondary" onClick={() => dispatch({ type: 'back' })}><Icon name="back"/>{t.back}</button><button className="button primary" onClick={() => dispatch(flow.screen === 'warning' ? { type: 'start' } : { type: 'next', count: scenario.steps.length })}>{flow.screen === 'warning' ? t.start : flow.index === scenario.steps.length - 1 ? t.finish : t.next}<Icon name={flow.screen === 'steps' && flow.index === scenario.steps.length - 1 ? 'check' : 'arrow'}/></button></>}
+          {flow.screen === 'complete' ? <><button className="button secondary" onClick={() => dispatch({ type: 'review', count: scenario.steps.length })}><Icon name="back"/>{t.review}</button><button className="button primary" onClick={restart}>{t.restart}<Icon name="restart"/></button></> : <><button className="button secondary" onClick={() => dispatch({ type: 'back' })}><Icon name="back"/>{t.back}</button><button className="button primary" onClick={() => dispatch({ type: 'start' })}>{t.start}<Icon name="arrow"/></button></>}
         </nav><p className="pace-note">{t.stop}</p>
       </>}
     </main>

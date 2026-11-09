@@ -23,7 +23,7 @@ async function click(renderer: ReactTestRenderer, label: string) {
 }
 
 for (const scenario of scenarios) for (const language of ['de', 'en'] as const) {
-  test(`${scenario.id}: complete UI navigation in ${language}, reverse, translate and reset`, async () => {
+  test(`${scenario.id}: focused guide in ${language}, completion, review and reset`, async () => {
     let view!: ReactTestRenderer;
     await act(async () => { view = create(createElement(App, { offlineStatus: 'ready' }), { createNodeMock: () => ({ focus() {}, showModal() {}, close() {} }) }); });
     const t = interfaceText[language];
@@ -35,38 +35,37 @@ for (const scenario of scenarios) for (const language of ['de', 'en'] as const) 
     await click(view, t.back);
     assert.equal(view.root.findAllByType('h3').length, 2);
     await act(async () => { view.root.findAllByType('button').find(b => textOf(b).includes(scenario.name[language]) && textOf(b).includes(t.open))!.props.onClick(); });
+    await click(view, t.themeDark);
+    assert.equal(document.documentElement.dataset.theme, 'dark');
     await click(view, t.start);
     assert.equal(textOf(view.root.findByType('h1')), scenario.steps[0].title[language]);
-    await click(view, t.back);
-    assert.equal(textOf(view.root.findByType('h1')), scenario.warning[language]);
-    await click(view, t.start);
 
     for (let i = 0; i < scenario.steps.length; i++) {
       assert.equal(textOf(view.root.findByType('h1')), scenario.steps[i].title[language]);
       const progress = view.root.findByProps({ role: 'progressbar' });
       assert.equal(progress.props['aria-valuenow'], i + 1);
       assert.equal(progress.props['aria-valuemax'], scenario.steps.length);
-      // Switching language twice must retain the exact step.
-      const alternate = language === 'de' ? 'en' : 'de';
-      await click(view, alternate === 'en' ? 'EN · English' : 'DE · Deutsch');
-      assert.equal(textOf(view.root.findByType('h1')), scenario.steps[i].title[alternate]);
-      await click(view, language === 'en' ? 'EN · English' : 'DE · Deutsch');
-      await click(view, t.themeDark);
+      assert.equal(view.root.findAllByType('header').length, 0);
+      assert.equal(view.root.findAllByType('footer').length, 0);
+      assert.equal(view.root.findAllByType('dialog').length, 0);
+      assert.equal(view.root.findAllByType('button').length, 1);
+      assert.equal(textOf(view.root.findByType('button')), t.next);
+      assert.ok(!textOf(view.root).includes(t.simulation));
+      assert.ok(!textOf(view.root).includes(t.stop));
+      assert.ok(!textOf(view.root).includes(t.pace));
+      assert.equal(document.documentElement.dataset.flow, 'steps');
       assert.equal(document.documentElement.dataset.theme, 'dark');
-      assert.equal(textOf(view.root.findByType('h1')), scenario.steps[i].title[language]);
-      await click(view, t.themeLight);
-      if (i > 0) {
-        await click(view, t.back);
-        assert.equal(textOf(view.root.findByType('h1')), scenario.steps[i - 1].title[language]);
-        await click(view, t.next);
-      }
-      await click(view, i === scenario.steps.length - 1 ? t.finish : t.next);
+      await click(view, t.next);
     }
     assert.equal(textOf(view.root.findByType('h1')), t.finished);
     assert.ok(textOf(view.root).includes(t.notAllClear));
+    assert.equal(view.root.findAllByType('header').length, 1);
+    assert.equal(view.root.findAllByType('footer').length, 1);
+    assert.equal(document.documentElement.dataset.flow, 'complete');
     await click(view, t.review);
     assert.equal(textOf(view.root.findByType('h1')), scenario.steps.at(-1)!.title[language]);
-    await click(view, t.finish);
+    await click(view, t.next);
+    await click(view, t.themeLight);
     await click(view, t.themeDark);
     await click(view, t.restart);
     assert.equal(document.documentElement.lang, 'de');

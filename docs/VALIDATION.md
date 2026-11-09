@@ -5,7 +5,7 @@ Checked 09.11.2026 on Windows with Node.js 22.17.0.
 ## Automated
 
 - `npm run build`: passed strict TypeScript compilation and Vite production build. Approximately 77 kB gzipped application JavaScript and 3.4 kB gzipped CSS. No runtime dependencies besides React and React DOM.
-- `npm test`: all **6 tests passed**. Four rendered-component tests cover the entire landslide/flood flow in DE and EN, back navigation, translation at every step, theme changes, dynamic progress, completion, final-step review, reset defaults and study information. Two tests cover bilingual content invariants and invalid navigation transitions.
+- `npm test`: all **6 tests passed**. Four rendered-component tests cover the entire landslide/flood flow in DE and EN, setup navigation, theme persistence, dynamic progress, completion, final-step review, reset defaults and study information. Every active step is checked for exactly one button and the absence of the header, footer, information dialog and extra notices. Two tests cover bilingual content invariants and invalid navigation transitions.
 - The test renderer emits its upstream deprecation notice; tests pass. These component tests do not replace browser, assistive-technology or participant evaluation.
 
 ## Browser checks
@@ -14,9 +14,13 @@ Checked 09.11.2026 on Windows with Node.js 22.17.0.
 - Visually checked light and dark instruction screens. Local SVGs render and the primary instruction remains prominent.
 - Completed the English landslide flow in the browser through all four actions and the completion screen.
 - Completed the German flood flow through all three actions and completion while the local production server was stopped.
-- Verified language switching retains the same step and changes the document language/title.
+- Language and theme are chosen before starting; the active guide hides those controls to keep only the step count, instruction card and Next button. Document language/title match the selected language.
 - Keyboard Enter activates scenario cards and the start button. After navigation, focus is on `main`. Escape closes the native information dialog and returns focus to its opener.
 - Saved `docs/preview-mobile.png` as a visual reference of the German flood step screen.
+
+### Focused guide update, 09.11.2026
+
+All 7 steps in both languages were checked at 320 × 568, 390 × 844 and 568 × 320: **42 layout checks passed**. The document's scroll width/height never exceeded the viewport, the instruction text stayed within its card, and exactly one Next button remained fully visible at the bottom. German and English flows both reached completion; dark mode persisted through the English landslide guide. A Page Down key press in the active guide left `scrollY` at zero. Short landscape viewports use a side-by-side illustration/text card. The mobile preview image was updated to this layout.
 
 ## Offline regression found and fixed
 

@@ -1,6 +1,6 @@
 # Schritt für Schritt / Step by step
 
-Mobile-first React + TypeScript + Vite research prototype for **simulated** landslides and floods. German is the default; DE/EN switches all visible interface text, scenario text, accessible labels and study information without losing the current step. Light and dark themes are fully implemented. No account, analytics, GPS, sound, real alerts or emergency calls.
+Mobile-first React + TypeScript + Vite research prototype for **simulated** landslides and floods. German is the default; DE/EN switches all visible interface text, scenario text, accessible labels and study information on setup and completion screens. The chosen language and theme apply throughout the focused guide. Light and dark themes are fully implemented. No account, analytics, GPS, sound, real alerts or emergency calls.
 
 GitHub Pages: https://ozelhd.github.io/emergency-guidance-study/
 
@@ -31,15 +31,15 @@ The production preview is normally `http://127.0.0.1:4173`. Offline support is e
 - `src/content/interface.ts`: all German/English interface text and accessibility labels.
 - `src/components/Illustration.tsx`: local, code-native SVG illustrations. No external images/fonts/CDNs.
 - `src/styles.css`: responsive design, light/dark colors, reduced motion and focus indicators.
-- `src/state.ts`: deterministic navigation state machine. Back from the first step returns to the warning. Back from the warning returns to selection.
+- `src/state.ts`: deterministic state machine for selection, warning, step advancement, completion, last-step review and restart. Back from the warning returns to selection.
 
 **Read `docs/SCENARIO_REVIEW.md` before any participant study.** It documents the PDF's unsafe flood contradiction, all editorial changes, the missing physical route, and unresolved study prerequisites. The supplied PDF and screenshot are reference material and are not uploaded with this app.
 
 ## Studienablauf / Study use
 
-Prepare the physical route and destination and explain them before opening the warning. The UI provides exactly one primary action per step; optional explanations clarify that action. Participants move forward explicitly. No timers, automatic advances or tracking are implemented. The information dialog explains data behavior and can be closed with Escape. A skip link, semantic controls, visible focus and focus movement to the main content support keyboard/screen-reader use.
+Prepare the physical route and destination and explain them before opening the warning. Choose language and theme before starting the guide. During the guide, only the step count, the instruction card and one **Weiter / Next** button are displayed. The card contains an illustration, the primary action and its relevant explanation. The guide fills the viewport without scrolling, with the button always at the bottom. There is no header, footer, repeated step number, secondary navigation or study information during a step. On short landscape screens the illustration and text sit side by side. Participants move forward explicitly; the last **Weiter / Next** opens the completion screen. No timers, automatic advances or tracking are implemented. Outside the active guide, the information dialog explains data behavior and can be closed with Escape. Semantic controls, visible focus and focus movement to the main content support keyboard/screen-reader use.
 
-After completion, **Neuen Durchgang starten / Start a new session** returns to selection and resets language to German and theme to light for a consistent initial state. A page reload also resets flow and preferences. Switching language or theme during a session preserves the current screen. Native browser Back is not used as step navigation; use the clearly labeled in-app Back control.
+After completion, **Neuen Durchgang starten / Start a new session** returns to selection and resets language to German and theme to light for a consistent initial state. A page reload also resets flow and preferences. Language and theme controls are available on selection, warning and completion screens. The completion screen allows reviewing the last step. Native browser Back is not used as step navigation.
 
 ## Statisch bereitstellen / Static deployment
 
@@ -63,4 +63,4 @@ The only persistent client storage is the browser's offline app-file cache. Part
 
 ## Validation
 
-`npm test` checks both scenario flows and both languages through selection, warning, every step, completion, reverse navigation, language/theme changes, restart defaults, and content/config invariants. `npm run build` runs strict TypeScript checks and produces the static release. Browser/manual QA results are in `docs/VALIDATION.md`.
+`npm test` checks both scenario flows and both languages through selection, warning, every focused step, completion, review, theme persistence, restart defaults, and content/config invariants. It checks that the active guide has only one button and no header, footer or extra notices. `npm run build` runs strict TypeScript checks and produces the static release. Browser/manual QA results are in `docs/VALIDATION.md`.
