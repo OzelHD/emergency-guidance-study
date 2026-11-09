@@ -45,7 +45,7 @@ After completion, **Neuen Durchgang starten / Start a new session** returns to s
 
 ### GitHub Pages (deployment target)
 
-The repository includes `.github/workflows/deploy.yml`. Push the project to the `main` branch of a GitHub repository, then select **Settings → Pages → Build and deployment → Source → GitHub Actions**. The workflow installs locked dependencies with `npm ci`, runs tests and the production build, uploads only `dist/`, and deploys it to Pages. Later pushes to `main` repeat the verified deployment. The resulting URL appears in the workflow's `github-pages` environment.
+The repository includes `.github/workflows/deploy.yml`. GitHub Pages is configured to use GitHub Actions. The workflow installs locked dependencies with `npm ci`, runs tests and the production build, uploads only `dist/`, and deploys it to Pages. Later pushes to `main` repeat the verified deployment. The resulting URL appears in the workflow's `pages-production` environment, which permits deployments only from `main`.
 
 Both `https://OWNER.github.io/REPOSITORY/` and a custom domain are supported: Vite uses relative URLs, and the service worker registers within the current repository directory. No repository name needs to be hard-coded. GitHub Pages availability depends on the repository's visibility and the account's plan. GitHub Pages visitor access is managed by GitHub, separately from the app; the application itself never asks for an account.
 

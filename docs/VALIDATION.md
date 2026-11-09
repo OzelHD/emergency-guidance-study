@@ -28,6 +28,8 @@ The final production rebuild also includes a revision derived from JS/CSS filena
 
 GitHub Pages workflow is configured at `.github/workflows/deploy.yml` for `OzelHD/emergency-guidance-study`. Publication was requested on 09.11.2026. The workflow runs all tests and the production build before deployment; its run status is available in the repository's Actions tab. Only `dist/` is configured as the deployment artifact; the supplied PDF, reference screenshot and temporary extracted text are not part of that artifact. The page is served under the repository subdirectory, using relative asset paths and a service worker scoped to that directory.
 
+Publication verified on 09.11.2026: https://ozelhd.github.io/emergency-guidance-study/ loads the application, the current German AI disclosure and the scenario selection without em dashes. All six tests, the production build and deployment passed in [workflow run 42674025597](https://github.com/OzelHD/emergency-guidance-study/actions/runs/42674025597), for application commit `37f97c34e259c0c4f0adbcf52c2f32d28fe3b475`. GitHub's original automatically created environment repeatedly produced internal server errors before deployment jobs could start. With the user's express approval, publication uses `pages-production` with the same restriction to the `main` branch. No credentials or additional users were added.
+
 ## Remaining evaluation limits
 
 No physical-device, iOS/Safari, full screen-reader, formal WCAG audit, professional emergency-content approval or participant usability study was performed. Check the study prerequisites and unresolved safety questions in `SCENARIO_REVIEW.md` before using the scripts with participants. The prototype is a facilitated simulation, not a live emergency service.
