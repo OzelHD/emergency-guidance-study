@@ -1,0 +1,8 @@
+node_modules/
+dist/
+tmp/
+*.tsbuildinfo
+.sites/
+.sites-runtime/
+.npm-cache/
+*.zip
