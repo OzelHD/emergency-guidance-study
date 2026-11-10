@@ -37,12 +37,16 @@ export function App({ offlineStatus = 'loading' }: { offlineStatus?: 'loading' |
     const progress = `${t.step} ${flow.index + 1} ${t.of} ${scenario.steps.length}`;
     return <div className="app-shell focused-shell">
       <main id="main" ref={mainRef} tabIndex={-1} className="main focused-main">
-        <div className="focused-progress" role="progressbar" aria-label={progress} aria-valuemin={0} aria-valuemax={scenario.steps.length} aria-valuenow={flow.index + 1}><strong>{progress}</strong></div>
+        <div className="focused-progress" role="progressbar" aria-label={progress} aria-valuemin={0} aria-valuemax={scenario.steps.length} aria-valuenow={flow.index + 1}>
+          <strong>{progress}</strong>
+          <div className="focused-step-bar" aria-hidden="true">{scenario.steps.map((item, index) => <span key={item.id} className={index <= flow.index ? 'filled' : undefined}/>)}</div>
+        </div>
         <article className="guidance-card focused-card">
           <div className="focused-visual"><Illustration name={step.illustration}/></div>
           <div className="focused-copy"><h1>{step.title[lang]}</h1><p>{step.explanation[lang]}</p></div>
         </article>
         <nav className="focused-navigation" aria-label={t.navigation}>
+          <button className="button secondary" onClick={() => dispatch({ type: 'back' })}><Icon name="back" size={18}/>{t.back}</button>
           <button className="button primary" onClick={() => dispatch({ type: 'next', count: scenario.steps.length })}>{t.next}<Icon name="arrow"/></button>
         </nav>
       </main>

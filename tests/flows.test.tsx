@@ -39,6 +39,9 @@ for (const scenario of scenarios) for (const language of ['de', 'en'] as const) 
     assert.equal(document.documentElement.dataset.theme, 'dark');
     await click(view, t.start);
     assert.equal(textOf(view.root.findByType('h1')), scenario.steps[0].title[language]);
+    await click(view, t.back);
+    assert.equal(textOf(view.root.findByType('h1')), scenario.warning[language]);
+    await click(view, t.start);
 
     for (let i = 0; i < scenario.steps.length; i++) {
       assert.equal(textOf(view.root.findByType('h1')), scenario.steps[i].title[language]);
@@ -48,13 +51,23 @@ for (const scenario of scenarios) for (const language of ['de', 'en'] as const) 
       assert.equal(view.root.findAllByType('header').length, 0);
       assert.equal(view.root.findAllByType('footer').length, 0);
       assert.equal(view.root.findAllByType('dialog').length, 0);
-      assert.equal(view.root.findAllByType('button').length, 1);
-      assert.equal(textOf(view.root.findByType('button')), t.next);
+      assert.equal(view.root.findAllByType('button').length, 2);
+      assert.deepEqual(view.root.findAllByType('button').map(textOf), [t.back, t.next]);
+      const segments = view.root.findByProps({ className: 'focused-step-bar' }).findAllByType('span');
+      assert.equal(segments.length, scenario.steps.length);
+      assert.equal(segments.filter(segment => segment.props.className === 'filled').length, i + 1);
       assert.ok(!textOf(view.root).includes(t.simulation));
       assert.ok(!textOf(view.root).includes(t.stop));
       assert.ok(!textOf(view.root).includes(t.pace));
       assert.equal(document.documentElement.dataset.flow, 'steps');
       assert.equal(document.documentElement.dataset.theme, 'dark');
+      if (i > 0) {
+        await click(view, t.back);
+        assert.equal(textOf(view.root.findByType('h1')), scenario.steps[i - 1].title[language]);
+        assert.equal(view.root.findByProps({ role: 'progressbar' }).props['aria-valuenow'], i);
+        assert.equal(view.root.findByProps({ className: 'focused-step-bar' }).findAllByType('span').filter(segment => segment.props.className === 'filled').length, i);
+        await click(view, t.next);
+      }
       await click(view, t.next);
     }
     assert.equal(textOf(view.root.findByType('h1')), t.finished);

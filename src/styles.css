@@ -12,8 +12,11 @@
 html[data-flow="steps"],html[data-flow="steps"] body{overflow:hidden;overscroll-behavior:none}
 .focused-shell{position:fixed;inset:0;max-width:none;min-height:0;height:100vh;height:100dvh;overflow:hidden;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
 .focused-main{display:grid;grid-template-rows:auto minmax(0,1fr) auto;gap:clamp(12px,2.5dvh,24px);width:100%;max-width:610px;min-height:0;height:100%;margin:0 auto;flex:none}
-.focused-progress{font-size:17px;line-height:1.5;color:var(--muted);padding:0 2px}
-.focused-progress strong{font-weight:600}
+.focused-progress{display:flex;align-items:center;gap:clamp(12px,3vw,24px);font-size:17px;line-height:1.5;color:var(--muted);padding:0 2px}
+.focused-progress strong{font-weight:600;flex-shrink:0}
+.focused-step-bar{display:flex;gap:6px;flex:1;min-width:0;color:var(--accent)}
+.focused-step-bar>span{flex:1;height:10px;border:1px solid currentColor;border-radius:999px}
+.focused-step-bar>span.filled{background:currentColor}
 .focused-card{display:grid;grid-template-rows:minmax(0,1fr) auto;min-height:0}
 .focused-visual{min-height:0;background:var(--soft);display:flex;align-items:center;justify-content:center}
 .focused-visual>.illustration{display:block;max-width:440px;max-height:100%;width:100%;height:100%}
@@ -21,7 +24,9 @@ html[data-flow="steps"],html[data-flow="steps"] body{overflow:hidden;overscroll-
 .focused-copy{padding:clamp(18px,3dvh,30px) clamp(20px,5vw,32px)}
 .focused-copy h1{font-size:clamp(26px,4dvh,36px);line-height:1.18;letter-spacing:-.8px}
 .focused-copy p{font-size:clamp(16px,2.4dvh,18px);line-height:1.5;margin-top:clamp(12px,2dvh,18px);color:var(--muted)}
-.focused-navigation .button{width:100%;min-height:58px;font-size:17px;padding:16px 22px;justify-content:space-between}
+.focused-navigation{display:grid;grid-template-columns:minmax(96px,1fr) minmax(0,2fr);gap:12px}
+.focused-navigation .button{width:100%;min-width:0;min-height:58px;font-size:17px;padding:16px 22px;justify-content:space-between}
+.focused-navigation .secondary{max-width:none;padding:14px 10px;gap:6px;font-size:14px;justify-content:center}
 @media(max-height:480px) and (min-aspect-ratio:1/1){
   .focused-shell{padding:max(10px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(10px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
   .focused-main{max-width:900px;gap:10px}
